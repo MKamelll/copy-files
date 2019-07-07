@@ -1,26 +1,50 @@
-use std::ffi::OsString;
-use std::fs::read_dir;
+use std::fs;
 use std::io;
 use std::path::Path;
+use std::path::PathBuf;
 
 // Main
 fn main() {
-  let path: &Path = Path::new("E:\\download\\Veep S01");
-  let all_dir_names = dir_list(&path);
-  println!("Name: {:?}", all_dir_names);
+  let path = Path::new("E:\\download\\The Big Bang");
+  let all_dir_paths = dir_list(&path).unwrap();
+  talk_a_walk(&path, &all_dir_paths).unwrap();
 }
 
-// List all files in a directory
-fn dir_list(dir: &Path) -> io::Result<Vec<OsString>> {
+// List all folders in a directory
+fn dir_list(dir: &Path) -> Result<Vec<PathBuf>, io::Error> {
   let mut all_dir_names = vec![];
   if dir.is_dir() {
-    for entry in read_dir(dir)? {
+    for entry in fs::read_dir(dir)? {
       let entry = entry?;
-      let name = entry.file_name();
-      all_dir_names.push(name);
+      let path = entry.path();
+      if path.is_dir() {
+        all_dir_names.push(path);
+      }
     }
   }
   Ok(all_dir_names)
 }
 
-// Get all media files and subtitles files
+// Go into each folder and move the files
+fn talk_a_walk(copy_to_path: &Path, all_dir_paths: &Vec<PathBuf>) -> Result<(), io::Error> {
+  if all_dir_paths.len() > 0 {
+    for dir in all_dir_paths {
+      for entry in fs::read_dir(dir)? {
+        let entry = entry?.path();
+        let name = entry.file_name().unwrap();
+        let formatted_path = PathBuf::from(copy_to_path.join(name));
+        let new_path = Path::new(&formatted_path);
+        if new_path.is_file() == false {
+          // Copy every old path to main directory
+          fs::copy(&entry, &new_path)?;
+        } else {
+          println!("File already there!: {:?}", name);
+        }
+      }
+    }
+    println!("Done!");
+    return Ok(());
+  } else {
+    return Err(io::Error::new(io::ErrorKind::Other, "No directories!"));
+  }
+}
