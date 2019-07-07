@@ -10,7 +10,7 @@ use std::path::PathBuf;
 
 // Main
 fn main() {
-  let path = Path::new("E:\\download\\Brooklyn-s06");
+  let path = Path::new("");
   let all_dir_paths = dir_list(&path).unwrap();
   talk_a_walk(&path, &all_dir_paths).unwrap();
 }
