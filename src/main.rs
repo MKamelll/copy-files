@@ -56,6 +56,7 @@ fn talk_a_walk(copy_to_path: &Path, all_dir_paths: &Vec<PathBuf>) -> Result<(), 
       }
     }
     println!("Done!");
+    pbar.finish();
   } else {
     println!("No directories!");
   }
