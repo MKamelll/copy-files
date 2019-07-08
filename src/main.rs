@@ -26,7 +26,6 @@ fn main() {
     println!("Where the the path, human?");
     process::exit(1);
   }
-  //let path = args[1].clone();
 }
 
 // List all folders in a directory
