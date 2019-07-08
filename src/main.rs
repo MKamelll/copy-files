@@ -3,16 +3,30 @@ extern crate indicatif;
 
 // Use
 use indicatif::ProgressBar;
+use std::env;
 use std::fs;
 use std::io;
 use std::path::Path;
 use std::path::PathBuf;
+use std::process;
 
 // Main
 fn main() {
-  let path = Path::new("");
-  let all_dir_paths = dir_list(&path).unwrap();
-  talk_a_walk(&path, &all_dir_paths).unwrap();
+  // Collect args
+  let args: Vec<String> = env::args().collect();
+  // Check index
+  if args.len() > 1 {
+    let path_arg = args[1].clone();
+    // Forms a path from a string
+    let path = Path::new(&path_arg);
+    let all_dir_paths = dir_list(&path).expect("Could not list directory!");
+    talk_a_walk(&path, &all_dir_paths).expect("Could not copy files!");
+  } else {
+    // Exit if no args
+    println!("Where the the path, human?");
+    process::exit(1);
+  }
+  //let path = args[1].clone();
 }
 
 // List all folders in a directory
