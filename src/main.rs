@@ -62,13 +62,18 @@ fn talk_a_walk(copy_to_path: &Path, all_dir_paths: &Vec<PathBuf>) -> Result<(), 
         // Check if the file is not already there
         if new_path.is_file() == false {
           // Copy every old path to its new path in main directory
-          fs::copy(&entry, &new_path)?;
+          match fs::copy(&entry, &new_path) {
+            Ok(_) => {}
+            Err(_) => {
+              continue;
+            }
+          }
         } else {
-          println!("File already there!: {:?}", name);
+          pbar.println(format!("File already there!: {:?}", name));
         }
       }
     }
-    println!("Done!");
+    pbar.finish_with_message("Done!");
   } else {
     println!("No directories!");
   }
